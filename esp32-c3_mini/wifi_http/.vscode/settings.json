@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "nvs_flash.h": "c",
+        "esp_http_server.h": "c",
+        "esp_sntp.h": "c"
+    }
+}

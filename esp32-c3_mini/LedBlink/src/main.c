@@ -31,14 +31,14 @@ void app_main(void)
     {
 		//esp_task_wdt_reset();
 
-		ESP_LOGI(TAG_LED, "Encendindo LED");
-        gpio_set_level(BLINK_GPIO, 1); // Encender LED
+		ESP_LOGI(TAG_LED, "Apagando LED");
+        gpio_set_level(BLINK_GPIO, 1); // Apagar LED
         esp_rom_delay_us(1 * 1000 * 1000);      // 1s
 		//xTaskCreate(&task_led_on, "led_on", 2048, NULL, 6, NULL);
 		//vTaskDelay(pdMS_TO_TICKS(1000));      // ceder CPU al scheduler
 
-		ESP_LOGI(TAG_LED, "Apagando LED");
-        gpio_set_level(BLINK_GPIO, 0); // Apagar LED
+		ESP_LOGI(TAG_LED, "Encendiendo LED");
+        gpio_set_level(BLINK_GPIO, 0); // Encender LED
         esp_rom_delay_us(1 * 1000 * 1000);      // 1s
 		//xTaskCreate(&task_led_off, "led_off", 2048, NULL, 6, NULL);
 		//vTaskDelay(pdMS_TO_TICKS(1000));      // ceder CPU al scheduler

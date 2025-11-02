@@ -1,11 +1,13 @@
+#include <time.h>
 #include "esp_sntp.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 
 
 #define TAG_SNTP "SNTP"
 
 void get_time_from_sntp(void) {
-    time_t now;
+    time_t timestamp;
     struct tm timeinfo;
     
     // Espera hasta que se obtenga la hora
@@ -16,17 +18,11 @@ void get_time_from_sntp(void) {
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
     
-    time(&now);
-    
-    // Ajusta la zona horaria (ejemplo para Argentina: GMT-3)
-    // Para otras zonas, busca el string de TZ (ej: "CET-1CEST,M3.5.0,M10.5.0/3")
-    setenv("TZ", "GMT+3", 1); 
-    tzset();
-    
+    time(&timestamp);
     // Convierte el tiempo Unix a la estructura de fecha y hora local
-    localtime_r(&now, &timeinfo);
+    localtime_r(&timestamp, &timeinfo);
 
-    if (timeinfo.tm_year < (2016 - 1900)) {
+    if (timeinfo.tm_year < (2024 - 1900)) {
         ESP_LOGE(TAG_SNTP, "La hora no es válida aún.");
     } else {
         // Formatea la salida
@@ -54,3 +50,25 @@ void initialize_sntp(void) {
     esp_sntp_init();
 }
 
+
+/**************************************************************
+ * Funciones de sincronización SNTP
+ **************************************************************/
+
+static void periodic_sntp_timer_callback(void* arg) {
+    get_time_from_sntp();
+}
+
+void initialize_sntp_periodic_sync(void) {
+    const long period = 360 * 1000 * 1000; // 1 hour
+
+    esp_timer_handle_t periodic_timer;
+    const esp_timer_create_args_t periodic_timer_args = {
+        .callback = &periodic_sntp_timer_callback,
+        .name = "sntp_periodic_task"
+    };
+
+    ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
+
+    ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, period));
+}

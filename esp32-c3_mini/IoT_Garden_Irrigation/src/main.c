@@ -11,6 +11,7 @@
 #include "sntp.h"
 #include "wifi.h"
 #include "webserver.h"
+#include <time.h>
 
 
 
@@ -33,6 +34,8 @@
 static const char *TAG = "HTTP_SERVER_EXAMPLE";
 
 
+
+
 void app_main(void)
 {
     esp_log_level_set("*", ESP_LOG_VERBOSE);
@@ -52,6 +55,7 @@ void app_main(void)
 
     ESP_LOGI(TAG, "Starting Wi-Fi...");
     wifi_init_sta();
+    vTaskDelay((20 * 1000) / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Starting web server...");
     start_webserver();
@@ -59,6 +63,16 @@ void app_main(void)
 
     initialize_sntp();
 
+    time_t now;
+    struct tm timeinfo;
+    setenv("TZ", "CST+3", 1);
+    tzset();
+
+    // Sincronizo la hora al inicio, luego por periodos.
+    get_time_from_sntp();
+
+    // Inicializo la sincronización periódica de SNTP
+    initialize_sntp_periodic_sync();
 
     while (1) {
         ESP_LOGI(TAG_LED, "Encendiendo LED");
@@ -69,7 +83,10 @@ void app_main(void)
         gpio_set_level(BLINK_GPIO, LED_OFF);
         vTaskDelay((30 * 1000) / portTICK_PERIOD_MS);
 
-        get_time_from_sntp();
+        time(&now);
+        localtime_r(&now, &timeinfo);
+        ESP_LOGI(TAG_LED, "Hora actual: %d:%d:%d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+
     }
 
 }

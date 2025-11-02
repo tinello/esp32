@@ -92,7 +92,8 @@ void get_time_from_sntp(void) {
     
     // Espera hasta que se obtenga la hora
     int retry = 0;
-    const int retry_count = 10;
+    const int retry_count = 15;
+
     while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
         ESP_LOGI(TAG, "Esperando por la sincronización de la hora... (%d/%d)", retry, retry_count);
         vTaskDelay(2000 / portTICK_PERIOD_MS);
@@ -102,7 +103,7 @@ void get_time_from_sntp(void) {
     
     // Ajusta la zona horaria (ejemplo para Argentina: GMT-3)
     // Para otras zonas, busca el string de TZ (ej: "CET-1CEST,M3.5.0,M10.5.0/3")
-    setenv("TZ", "GMT+3", 1); // Nose porque, tengo que usar +3, algun dia lo arreglare.
+    setenv("TZ", "CST+3", 1); // La zona horaria es a la inversa, GMT-3 es CST+3.
     tzset();
     
     // Convierte el tiempo Unix a la estructura de fecha y hora local
@@ -114,7 +115,7 @@ void get_time_from_sntp(void) {
         // Formatea la salida
         char strftime_buf[64];
         strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-        ESP_LOGI(TAG, "Fecha y Hora actual: %s", strftime_buf);
+        ESP_LOGI(TAG, "Fecha y Hora actual de Argentina: %s", strftime_buf);
     }
 }
 

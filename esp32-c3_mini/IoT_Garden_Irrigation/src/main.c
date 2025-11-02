@@ -2,12 +2,12 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
+//#include "esp_wifi.h"
+//#include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
-#include <netinet/in.h>
-#include <arpa/inet.h>
+//#include <netinet/in.h>
+//#include <arpa/inet.h>
 #include "sntp.h"
 #include "wifi.h"
 #include "webserver.h"
@@ -27,11 +27,10 @@
 
 #define BLINK_GPIO GPIO_NUM_8  // LED integrado del DevKitM-1
 
+#define LED_ON 0    // El 0 enciende el LED
+#define LED_OFF 1   // El 1 apaga el LED
+
 static const char *TAG = "HTTP_SERVER_EXAMPLE";
-
-
-
-
 
 
 void app_main(void)
@@ -63,11 +62,11 @@ void app_main(void)
 
     while (1) {
         ESP_LOGI(TAG_LED, "Encendiendo LED");
-        gpio_set_level(BLINK_GPIO, 0); // El 0 enciende el LED
+        gpio_set_level(BLINK_GPIO, LED_ON);
         vTaskDelay((30 * 1000) / portTICK_PERIOD_MS);
 
         ESP_LOGI(TAG_LED, "Apagando LED");
-        gpio_set_level(BLINK_GPIO, 1); // El 1 apaga el LED
+        gpio_set_level(BLINK_GPIO, LED_OFF);
         vTaskDelay((30 * 1000) / portTICK_PERIOD_MS);
 
         get_time_from_sntp();

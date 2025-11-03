@@ -40,8 +40,10 @@ void app_main(void)
 {
     esp_log_level_set("*", ESP_LOG_VERBOSE);
 
+    // Retardo de inicio
     vTaskDelay((4 * 1000) / portTICK_PERIOD_MS);
 
+    // Configuramos el GPIO
     gpio_reset_pin(BLINK_GPIO);
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 
@@ -55,6 +57,7 @@ void app_main(void)
 
     ESP_LOGI(TAG, "Starting Wi-Fi...");
     wifi_init_sta();
+    // Retraso para asegurar que la conexión Wi-Fi esté establecida
     vTaskDelay((20 * 1000) / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Starting web server...");
@@ -86,7 +89,6 @@ void app_main(void)
         time(&now);
         localtime_r(&now, &timeinfo);
         ESP_LOGI(TAG_LED, "Hora actual: %d:%d:%d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-
     }
 
 }

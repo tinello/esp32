@@ -60,7 +60,12 @@ static void periodic_sntp_timer_callback(void* arg) {
 }
 
 void initialize_sntp_periodic_sync(void) {
-    const long period = 360 * 1000 * 1000; // 1 hour
+    const int micro = 1000;
+    const int milli = 1000;
+    const int second = 60;
+    const int minute = 60;
+    const int hour = 2;
+    const uint64_t period = (uint64_t)hour*minute*second*milli*micro; // 2 hours
 
     esp_timer_handle_t periodic_timer;
     const esp_timer_create_args_t periodic_timer_args = {

@@ -1,7 +1,6 @@
 #include <time.h>
 #include "esp_sntp.h"
 #include "esp_log.h"
-#include "esp_timer.h"
 
 
 #define TAG_SNTP "SNTP"
@@ -48,32 +47,4 @@ void initialize_sntp(void) {
     
     // Inicia el proceso de sincronización
     esp_sntp_init();
-}
-
-
-/**************************************************************
- * Funciones de sincronización SNTP
- **************************************************************/
-
-static void periodic_sntp_timer_callback(void* arg) {
-    get_time_from_sntp();
-}
-
-void initialize_sntp_periodic_sync(void) {
-    const int micro = 1000;
-    const int milli = 1000;
-    const int second = 60;
-    const int minute = 60;
-    const int hour = 2;
-    const uint64_t period = (uint64_t)hour*minute*second*milli*micro; // 2 hours
-
-    esp_timer_handle_t periodic_timer;
-    const esp_timer_create_args_t periodic_timer_args = {
-        .callback = &periodic_sntp_timer_callback,
-        .name = "sntp_periodic_task"
-    };
-
-    ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
-
-    ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, period));
 }

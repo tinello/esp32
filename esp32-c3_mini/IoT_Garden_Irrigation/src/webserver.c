@@ -36,6 +36,19 @@ static esp_err_t hello_get_handler(httpd_req_t *req)
 {
     //gpio_set_level(BLINK_GPIO, 1); // apagar LED
 
+    long long manual_timestamp = 1762128000; 
+
+    struct timeval tv;
+    tv.tv_sec = (time_t)manual_timestamp;
+    tv.tv_usec = 0;
+
+    if (settimeofday(&tv, NULL) != 0) {
+        printf("Error al establecer la hora.\n");
+    } else {
+        printf("Hora establecida manualmente.\n");
+    }
+
+
     char *client_ip = get_and_print_client_ip(req);
     char resp_str[128];
     snprintf(resp_str, sizeof(resp_str), "<h1>Hello from ESP32-C3! %s</h1>", client_ip);

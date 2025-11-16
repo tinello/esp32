@@ -2,7 +2,7 @@
 #include "crontab.h"
 #include "esp_log.h"
 
-
+static const char *TAG = "CRONTAB";
 
 
 
@@ -27,13 +27,12 @@ static void periodic_crontab_timer_callback(void *arg) {
         bool minute_match = (task->minute == -1) || (task->minute == timeinfo.tm_min);
         bool second_match = (task->second == -1) || (task->second == timeinfo.tm_sec);
 
-        ESP_LOGI("CRONTAB", "crontab_periodic_timer_callback: Task %d executed, irrigation state: %d", i, tasks->irrigation->state);
+        //ESP_LOGI(TAG, "crontab_periodic_timer_callback: Task %d executed, irrigation state: %d", i, tasks->irrigation->state);
 
 
         if (day_match && hour_match && minute_match && second_match && 
             /*task->available_this_task &&*/ tasks->irrigation->state == WAITING) {
-            //ESP_LOGI(TAG, "crontab_periodic_timer_callback: Task %d executed", task->second);
-            //task->available_this_task = false;  // Marcar la tarea como no disponible/en ejecución
+            ESP_LOGI(TAG, "Start Irrigation: Task %d, day: %d, hour: %d, minute: %d, second: %d", i, task->day_of_week, task->hour, task->minute, task->second);
             tasks->irrigation->state = START; // Iniciar el parpadeo del LED
         }
     }

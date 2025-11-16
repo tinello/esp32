@@ -8,6 +8,7 @@ static const char *TAG = "IRRIGATION";
 
 
 void irrigation_process(irrigation_t *irrigation) {
+    ESP_LOGI(TAG, "Irrigation state: %d", irrigation->state);
     switch (irrigation->state) {
         case WAITING:
             break;
@@ -68,6 +69,12 @@ void irrigation_process(irrigation_t *irrigation) {
             break;
         case FINISH:
             gpio_set_level(irrigation->status_led_pin, 1);
+            irrigation->delayToSolenoidOn = 5;
+            irrigation->delayToPumpOn = 5;
+            irrigation->delayToIrrigation = 5;
+            irrigation->delayToPumpOff = 5;
+            irrigation->delayToSolenoidOff = 5;
+            irrigation->delayToPumpRefresh = 5;
             irrigation->state = WAITING;
             break;
         default:

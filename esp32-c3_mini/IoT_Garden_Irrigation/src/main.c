@@ -115,8 +115,13 @@ void app_main(void)
     // Retraso para asegurar que la conexión Wi-Fi esté establecida
     vTaskDelay((20 * 1000) / portTICK_PERIOD_MS);
 
+    ESP_LOGI(TAG, "Starting irrigation periodic check...");
+    irrigation_t irrigation;
+    irrigation_init(&irrigation);
+    initialize_irrigation_periodic_check(&irrigation);
+    
     ESP_LOGI(TAG, "Starting web server...");
-    start_webserver();
+    start_webserver(&(irrigation.state));
 
     ESP_LOGI(TAG, "Starting SNTP...");
     initialize_sntp();
@@ -127,10 +132,7 @@ void app_main(void)
     ESP_LOGI(TAG, "Starting sync SNTP...");
     get_time_from_sntp();
 
-    ESP_LOGI(TAG, "Starting irrigation periodic check...");
-    irrigation_t irrigation;
-    irrigation_init(&irrigation);
-    initialize_irrigation_periodic_check(&irrigation);
+    
 
 
     ESP_LOGI(TAG, "Starting crontab periodic check...");

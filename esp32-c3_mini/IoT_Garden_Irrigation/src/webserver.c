@@ -1,6 +1,7 @@
 #include "esp_http_server.h"
 #include <sys/socket.h>
 #include "esp_log.h"
+#include "irrigation.h"
 
 
 static const char *TAG_SERVER = "WEB_SERVER";
@@ -34,9 +35,7 @@ char *get_and_print_client_ip(httpd_req_t *req) {
 /* URI handler for GET /hello */
 static esp_err_t hello_get_handler(httpd_req_t *req)
 {
-    //gpio_set_level(BLINK_GPIO, 1); // apagar LED
-
-    long long manual_timestamp = 1762128000; 
+    /*long long manual_timestamp = 1762128000; 
 
     struct timeval tv;
     tv.tv_sec = (time_t)manual_timestamp;
@@ -46,12 +45,12 @@ static esp_err_t hello_get_handler(httpd_req_t *req)
         printf("Error al establecer la hora.\n");
     } else {
         printf("Hora establecida manualmente.\n");
-    }
+    }*/
 
-
+    httpd_resp_set_type(req, "application/json");
     char *client_ip = get_and_print_client_ip(req);
     char resp_str[128];
-    snprintf(resp_str, sizeof(resp_str), "<h1>Hello from ESP32-C3! %s</h1>", client_ip);
+    snprintf(resp_str, sizeof(resp_str), "{\"message\":\"Hello from ESP32-C3!\", \"client_ip\":\"%s\"}", client_ip);
     ESP_LOGI(TAG_SERVER, "Sending response: %s", resp_str);
     httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
@@ -60,31 +59,35 @@ static esp_err_t hello_get_handler(httpd_req_t *req)
 /* URI handler for GET / */
 static esp_err_t root_get_handler(httpd_req_t *req)
 {
-    //gpio_set_level(BLINK_GPIO, 0); // encender LED
+    httpd_resp_set_type(req, "application/json");
 
-    const char* resp_str = "<h1>ESP32-C3 HTTP Server</h1><p>Visit /hello for a message.</p>";
+    irrigation_state_t *irrigationState = (irrigation_state_t *)req->user_ctx;
+
+    char resp_str[128];
+    snprintf(resp_str, sizeof(resp_str), "{\"healthy\":true, \"irrigation_state\":%d}", *irrigationState);
     ESP_LOGI(TAG_SERVER, "Sending response: %s", resp_str);
     httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
 
-static httpd_uri_t hello = {
-    .uri       = "/hello",
-    .method    = HTTP_GET,
-    .handler   = hello_get_handler,
-    .user_ctx  = NULL
-};
-
-static httpd_uri_t root = {
-    .uri       = "/",
-    .method    = HTTP_GET,
-    .handler   = root_get_handler,
-    .user_ctx  = NULL
-};
 
 /* Start the web server */
-httpd_handle_t start_webserver(void)
+httpd_handle_t start_webserver(irrigation_state_t* irrigationState)
 {
+    httpd_uri_t hello = {
+        .uri       = "/hello",
+        .method    = HTTP_GET,
+        .handler   = hello_get_handler,
+        .user_ctx  = NULL
+    };
+
+    httpd_uri_t root = {
+        .uri       = "/",
+        .method    = HTTP_GET,
+        .handler   = root_get_handler,
+        .user_ctx  = irrigationState
+    };
+
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 

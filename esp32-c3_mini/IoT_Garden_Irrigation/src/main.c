@@ -63,7 +63,7 @@ ScheduledTask tasks[] = {
     }
 };
 
-
+irrigation_t irrigation;
 
 
 
@@ -76,7 +76,6 @@ void irrigation_init(irrigation_t *irrigation) {
     irrigation->delayToSolenoidOn = 5;
     irrigation->delayToPumpOn = 5;
     irrigation->delayToIrrigation = 5;
-    irrigation->delayToPumpOff = 5;
     irrigation->delayToSolenoidOff = 5;
     irrigation->delayToPumpRefresh = 5;
 }
@@ -115,13 +114,19 @@ void app_main(void)
     // Retraso para asegurar que la conexión Wi-Fi esté establecida
     vTaskDelay((20 * 1000) / portTICK_PERIOD_MS);
 
+    const uint8_t num_tasks = sizeof(tasks) / sizeof(ScheduledTask);
+    crontab_tasks_t crontab_tasks = {
+        .numTasks = num_tasks,
+        .tasks = tasks,
+        .irrigation = &irrigation
+    };
+
     ESP_LOGI(TAG, "Starting irrigation periodic check...");
-    irrigation_t irrigation;
     irrigation_init(&irrigation);
     initialize_irrigation_periodic_check(&irrigation);
     
     ESP_LOGI(TAG, "Starting web server...");
-    start_webserver(&(irrigation.state));
+    start_webserver(&crontab_tasks);
 
     ESP_LOGI(TAG, "Starting SNTP...");
     initialize_sntp();
@@ -132,18 +137,8 @@ void app_main(void)
     ESP_LOGI(TAG, "Starting sync SNTP...");
     get_time_from_sntp();
 
-    
-
 
     ESP_LOGI(TAG, "Starting crontab periodic check...");
-    const uint8_t num_tasks = sizeof(tasks) / sizeof(ScheduledTask);
-
-    crontab_tasks_t crontab_tasks = {
-        .numTasks = num_tasks,
-        .tasks = tasks,
-        .irrigation = &irrigation
-    };
-
     initialize_crontab_periodic_check(&crontab_tasks);
     
 

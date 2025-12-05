@@ -26,7 +26,6 @@ typedef struct {
     int delayToSolenoidOn;
     int delayToPumpOn;
     int delayToIrrigation;
-    int delayToPumpOff;
     int delayToSolenoidOff;
     int delayToPumpRefresh;
 } irrigation_t;

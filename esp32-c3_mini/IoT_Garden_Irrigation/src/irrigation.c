@@ -39,8 +39,8 @@ void irrigation_process(irrigation_t *irrigation) {
             irrigation->state = DELAY_TO_IRRIGATION;
             break;
         case DELAY_TO_IRRIGATION:
-            if(irrigation->delayToPumpOff > 0) {
-                irrigation->delayToPumpOff--;
+            if(irrigation->delayToIrrigation > 0) {
+                irrigation->delayToIrrigation--;
             } else {
                 irrigation->state = PUMP_OFF;
             }
@@ -72,7 +72,6 @@ void irrigation_process(irrigation_t *irrigation) {
             irrigation->delayToSolenoidOn = 5;
             irrigation->delayToPumpOn = 5;
             irrigation->delayToIrrigation = 5;
-            irrigation->delayToPumpOff = 5;
             irrigation->delayToSolenoidOff = 5;
             irrigation->delayToPumpRefresh = 5;
             irrigation->state = WAITING;

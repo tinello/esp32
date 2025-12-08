@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: api
+  description: API for IoT Garden Irrigation.
+  contact:
+    email: api@tinello.com.ar
+
+security:
+  - AuthorizationHeader: [ ]
+
+paths:
+  /:
+    get:
+      operationId: service_info
+      security: [ ]
+      description: |
+        Reports the status and version.
+      tags:
+        - Info
+      responses:
+        '200':
+          description: Service info
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - version
+                  - healthy
+                properties:
+                  version:
+                    type: string
+                    example: 1.0.0
+                  healthy:
+                    type: boolean
+                    example: true
+
+  /get_irrigation:
+    get:
+      operationId: get_irrigation
+      description: |
+        Retrieves the current irrigation state and delays.
+      tags:
+        - Irrigation
+      responses:
+        '200':
+          description: Irrigation state
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - irrigation_state
+                  - delay_to_solenoid_on
+                  - delay_to_pump_on
+                  - delay_to_irrigation
+                  - delay_to_solenoid_off
+                  - delay_to_pump_refresh
+                properties:
+                  irrigation_state:
+                    type: integer
+                    example: 1
+                  delay_to_solenoid_on:
+                    type: integer
+                    example: 5
+                  delay_to_pump_on:
+                    type: integer
+                    example: 5
+                  delay_to_irrigation:
+                    type: integer
+                    example: 5
+                  delay_to_solenoid_off:
+                    type: integer
+                    example: 5
+                  delay_to_pump_refresh:
+                    type: integer
+                    example: 5
+
+  /get_scheduled:
+    get:
+      operationId: get_scheduled
+      description: |
+        Retrieves the list of scheduled irrigation tasks.
+      tags:
+        - Scheduled
+      responses:
+        '200':
+          description: Scheduled tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    day_of_week:
+                      type: integer
+                      example: -1
+                    hour:
+                      type: integer
+                      example: -1
+                    minute:
+                      type: integer
+                      example: -1
+                    second:
+                      type: integer
+                      example: 30
+                    

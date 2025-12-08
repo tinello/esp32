@@ -93,8 +93,8 @@ static esp_err_t root_get_handler(httpd_req_t *req)
 {
     httpd_resp_set_type(req, "application/json");
 
-    char resp_str[32];
-    snprintf(resp_str, sizeof(resp_str), "{\"healthy\":true}");
+    char resp_str[64];
+    snprintf(resp_str, sizeof(resp_str), "{\"healthy\":true, \"version\":\"1.0.0\"}");
     ESP_LOGI(TAG_SERVER, "Sending response: %s", resp_str);
     httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
     return ESP_OK;

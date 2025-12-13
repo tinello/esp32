@@ -8,3 +8,4 @@
 [ESP32-C3 SuperMini Expansion Board](docs/Placa_de_expansion_ESP32C3SuperMini.pdf)
 
 
+[ESP32-C3 SuperMini and expansion board]([docs/Placa_de_expansion_ESP32C3SuperMini.pdf](https://michiel.vanderwulp.be/domotica/Modules/ESP32-C3-SuperMini/))

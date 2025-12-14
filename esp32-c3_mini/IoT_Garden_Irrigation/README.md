@@ -32,3 +32,4 @@
 | Irrigation Stated     | http://[ESP32-IP]/get_irrigation         |
 | List of schedule task | http://[ESP32-IP]/get_scheduled          |
 
+[OpenAPI Contract](./contract.yaml)
